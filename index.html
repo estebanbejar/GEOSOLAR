@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GEOSOLAR · Universidad de Salamanca</title>
+  <meta name="description" content="Laboratorios docentes de geometría solar, sombras y seguimiento fotovoltaico de la Universidad de Salamanca.">
+  <link rel="icon" href="assets/usal.png"><link rel="stylesheet" href="src/ui/styles.css">
+  <script defer src="src/core/models.js"></script><script defer src="src/ui/graphics.js"></script><script defer src="src/ui/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#controls">Ir a los parámetros</a>
+<header class="brand">
+  <img id="usal-logo" src="assets/usal.png" alt="Universidad de Salamanca" width="192" height="54">
+  <div class="brand-divider"></div>
+  <div class="brand-unit">Escuela Técnica Superior de Ingeniería Industrial<span>Área de Tecnología Electrónica</span></div>
+  <div class="brand-project">GEOSOLAR<span>Laboratorios de tecnología fotovoltaica</span></div>
+</header>
+<nav class="lab-nav" aria-label="Laboratorios">
+  <button data-lab="orbit" aria-current="page"><span>01</span> Órbita Tierra–Sol</button>
+  <button data-lab="basic"><span>02</span> Geometría solar</button>
+  <button data-lab="fixed"><span>03</span> Filas y sombras</button>
+  <button data-lab="eo"><span>04</span> Este–Oeste</button>
+  <button data-lab="tracking"><span>05</span> Seguimiento N–S</button>
+</nav>
+<main>
+  <section class="intro">
+    <div><p class="eyebrow" id="eyebrow">FUNDAMENTOS / LABORATORIO 01</p><h1 id="title">Órbita Tierra–Sol</h1><p id="subtitle">Explora la relación entre latitud, declinación y posición del Sol.</p></div>
+    <div class="local-badge"><span></span> Cálculo local · sin conexión</div>
+  </section>
+  <div class="workspace">
+    <aside class="controls-panel" aria-label="Parámetros del laboratorio">
+      <div class="panel-heading"><h2>Explorar</h2><button class="text-button" id="reset" title="Restablecer este laboratorio">Restablecer ↺</button></div>
+      <form id="controls" autocomplete="off"></form>
+      <div class="scenario-actions"><button id="save-scenario">Guardar escenario</button><button id="load-scenario">Abrir escenario</button><input id="scenario-file" type="file" accept=".json,application/json" hidden></div>
+      <p class="mini-note">Los escenarios se guardan en tu equipo. No se envían datos a ningún servidor.</p>
+    </aside>
+    <section class="results" aria-label="Resultados">
+      <div id="error" class="error" role="alert" hidden></div>
+      <p id="figure-time" hidden></p>
+      <div class="metrics" id="metrics" aria-label="Indicadores del instante seleccionado"></div>
+      <div id="tabs" class="view-tabs" hidden><button data-view="scene" aria-pressed="true">Instalación y sombras</button><button data-view="monthly" aria-pressed="false">Giro · 12 fechas</button></div>
+      <div id="display-board" class="display-board"><div class="visuals" id="visuals"></div><section id="orbit-curves" class="orbit-side" hidden aria-label="Curvas anuales"></section></div>
+      <div id="shadow-key" class="shadow-key" hidden><div class="shadow-swatches"><span><i class="swatch-front"></i>Azulado: cara frontal iluminada</span><span><i class="swatch-back"></i>Azul oscuro: incidencia posterior o rasante</span><span><i class="swatch-shade"></i>Rojo: sombra geométrica sobre la cara frontal</span><span><i class="swatch-night"></i>Gris: noche o Sol oculto por el terreno</span></div><p>El rojo delimita la sombra proyectada por otras mesas sobre una cara que recibe Sol frontal. La incidencia posterior se representa en azul oscuro, sin superponer rojo. Estos colores describen iluminación directa y geometría; no cuantifican pérdidas de energía.</p></div>
+      <section id="orbit-time-explanation" class="orbit-time-explanation" hidden></section>
+      <section class="timebar" id="timebar" aria-label="Animación">
+        <button id="play" class="play" aria-label="Reproducir animación">▶ Reproducir</button>
+        <div class="time-control"><label id="time-label" for="time-slider">Hora solar</label><input id="time-slider" type="range" min="0" max="24" step="0.02" value="12"><div class="time-ticks" id="time-ticks"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div></div>
+        <div class="time-value"><input id="time-value" type="number" min="0" max="24" step="0.01" value="12" aria-label="Hora seleccionada"><span id="time-unit">h solares</span></div>
+      </section>
+      <section id="chart-section" class="chart-section"><div class="section-heading"><h2 id="chart-title">Evolución diaria</h2><button class="text-button" id="export-csv">Descargar datos ↓</button></div><div id="charts" class="charts"></div><div id="chart-legend" class="legend"></div><p id="chart-note" class="chart-note"></p></section>
+      <section id="monthly-section" class="chart-section" hidden aria-label="Giro anual en doce fechas"><div class="section-heading"><h2>Giro anual · día 21 de doce meses</h2><button class="text-button" data-monthly-csv="true">Descargar giro mensual ↓</button></div><div id="monthly-charts" class="monthly-charts"></div><div id="monthly-legend" class="legend"></div><p class="chart-note">Mismo paso en ambas gráficas. Horas solares respecto al mediodía. El giro cero sigue la pendiente N–S del eje.</p></section>
+      <details class="data-table"><summary>Consultar resultados en tabla</summary><div id="table-wrap"></div></details>
+      <details class="explanation" open><summary>Modelo y claves de interpretación</summary><div id="explanation"></div></details>
+    </section>
+  </div>
+</main>
+<footer><span>Universidad de Salamanca · GEOSOLAR</span><span>Modelos docentes aproximados · Fases 1–4 · Versión local 0.7</span></footer>
+<div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

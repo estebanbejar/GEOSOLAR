@@ -1,0 +1,52 @@
+name: Comprobar y publicar GEOSOLAR
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: geosolar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Comprobar y preparar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Comprobar sintaxis y modelos
+        run: node scripts/check.cjs
+      - name: Preparar web y descarga autónoma
+        run: node scripts/build.cjs
+      - name: Guardar web para Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: Publicar en GitHub Pages
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4

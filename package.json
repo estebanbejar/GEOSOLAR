@@ -1,0 +1,12 @@
+{
+  "name": "geosolar",
+  "version": "0.7.0",
+  "private": true,
+  "description": "Laboratorios docentes de geometría solar y layouts fotovoltaicos de la Universidad de Salamanca",
+  "license": "MIT",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "test": "node scripts/check.cjs",
+    "build": "node scripts/build.cjs"
+  }
+}

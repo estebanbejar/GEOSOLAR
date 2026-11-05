@@ -1,0 +1,21 @@
+# Preparación local y resultados reproducibles
+node_modules/
+site/
+tests/reference/comparison.json
+work/
+tmp/
+*.log
+*.zip
+
+# Configuración local y credenciales
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+~$*
