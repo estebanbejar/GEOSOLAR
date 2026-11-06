@@ -187,6 +187,11 @@
     const hourly=Array.from({length:24},(_,time)=>({time,color:'#b0b9b2',width:.7,dash:[2,4],data:G.range(-23.45,23.45,121).map(d=>({time,declination:d,...G.solar(lat,d,time)}))}));
     return {daily:[...intermediate,...references,selected],hourly};
   }
+  // Display coordinates only: retain the model's South-based azimuth elsewhere.
+  function solarChartAzimuth(az,lat){
+    if(az===null)return null;
+    return lat<0?((az+360)%360+360)%360-180:az;
+  }
   function solarCards(polar,cartesian,state){
     const lines=solarChartLines(state.lat,state.delta),series=[...lines.hourly,...lines.daily];
     const current=G.solar(state.lat,state.delta,state.time),a=surface(polar),b=surface(cartesian);
@@ -200,33 +205,33 @@
     for(let az=0;az<360;az+=15){pc.beginPath();pc.moveTo(cx,cy);pc.lineTo(cx+r*G.sin(az),cy-r*G.cos(az));pc.stroke();}
     pc.setLineDash([]);pc.fillStyle='#65756c';pc.fillText('90°',cx,cy+3);
     for(const [name,az] of [['N',0],['E',90],['S',180],['O',270]]){pc.fillStyle=name==='S'?'#8c243c':'#40574b';pc.font='bold 11px system-ui';pc.fillText(name,cx+(r+17)*G.sin(az),cy-(r+17)*G.cos(az)+4);}
-    const cc=b.ctx,left=43,right=17,top=24,bottom=39;
+    const cc=b.ctx,left=43,right=17,top=24,bottom=39,chartAz=p=>solarChartAzimuth(p.az,state.lat);
     const px=az=>left+(az+180)/360*(b.w-left-right),py=alt=>b.h-bottom-alt/90*(b.h-top-bottom);
     cc.font='9px system-ui';
     for(let alt=0;alt<=90;alt+=15){const y=py(alt);cc.strokeStyle='#e0e7e2';cc.beginPath();cc.moveTo(left,y);cc.lineTo(b.w-right,y);cc.stroke();cc.fillStyle='#6b7c71';cc.textAlign='right';cc.fillText(alt+'°',left-7,y+3);}
     for(let az=-180;az<=180;az+=30){const x=px(az);cc.strokeStyle='#e0e7e2';cc.beginPath();cc.moveTo(x,top);cc.lineTo(x,b.h-bottom);cc.stroke();cc.fillStyle='#6b7c71';cc.textAlign='center';cc.fillText(String(az)+'°',x,b.h-bottom+14);}
-    cc.textAlign='left';cc.fillText('Altura solar',left,11);cc.textAlign='center';cc.fillText('Acimut desde el Sur · E −90° / S 0° / O +90°',b.w/2,b.h-5);
+    cc.textAlign='left';cc.fillText('Altura solar',left,11);cc.textAlign='center';cc.fillText(state.lat<0?'Acimut centrado en el Norte · O −90° / N 0° / E +90°':'Acimut desde el Sur · E −90° / S 0° / O +90°',b.w/2,b.h-5);
     for(const s of series){
-      for(const [ctx,project,cart] of [[pc,p=>polarPoint(p,cx,cy,r),false],[cc,p=>[px(p.az),py(p.alt)],true]]){
+      for(const [ctx,project,cart] of [[pc,p=>polarPoint(p,cx,cy,r),false],[cc,p=>[px(chartAz(p)),py(p.alt)],true]]){
         ctx.save();ctx.strokeStyle=s.color;ctx.lineWidth=s.width;ctx.setLineDash(s.dash);ctx.beginPath();let active=false,previous=null;
         for(const p of s.data){
           if(p.U< -1e-10||(cart&&p.az===null)){active=false;previous=null;continue;}
-          const at=project(p);if(cart&&previous!==null&&Math.abs(p.az-previous)>180)active=false;
-          if(active)ctx.lineTo(...at);else ctx.moveTo(...at);active=true;previous=p.az;
+          const at=project(p),az=chartAz(p);if(cart&&previous!==null&&Math.abs(az-previous)>180)active=false;
+          if(active)ctx.lineTo(...at);else ctx.moveTo(...at);active=true;previous=az;
         }ctx.stroke();ctx.restore();
       }
     }
     // Hour labels use solar time, independent of the date/manual declination mode.
     for(let time=0;time<24;time+=2){const p=G.solar(state.lat,state.delta,time);if(p.U<=1e-10)continue;
       const [x,y]=polarPoint(p,cx,cy,r),rad=Math.hypot(x-cx,y-cy),dx=rad>1e-6?(x-cx)/rad:1,dy=rad>1e-6?(y-cy)/rad:0;
-      for(const [ctx,X,Y] of [[pc,x,y],...(p.az===null?[]:[[cc,px(p.az),py(p.alt)]])]){
+      for(const [ctx,X,Y] of [[pc,x,y],...(p.az===null?[]:[[cc,px(chartAz(p)),py(p.alt)]])]){
         ctx.fillStyle='#8c243c';ctx.beginPath();ctx.arc(X,Y,2,0,2*Math.PI);ctx.fill();ctx.font='9px system-ui';ctx.textAlign='center';ctx.fillText(time+' h',X+(ctx===pc?dx*11:0),Y+(ctx===pc?dy*11:-8));
       }
     }
     if(current.U>=-1e-10){
-      const pts=[[pc,...polarPoint(current,cx,cy,r)],...(current.az===null?[]:[[cc,px(current.az),py(current.alt)]])];
+      const pts=[[pc,...polarPoint(current,cx,cy,r)],...(current.az===null?[]:[[cc,px(chartAz(current)),py(current.alt)]])];
       for(const [ctx,x,y] of pts){ctx.fillStyle='#d3a134';ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,5,0,2*Math.PI);ctx.fill();ctx.stroke();}
     }
   }
-  root.GEOSOLAR_GRAPHICS={palette,surface,path,polygon,dot,text,scene,chart,basicScenes,installation,orbital,sunPath,polarPoint,solarChartLines,solarCards};
+  root.GEOSOLAR_GRAPHICS={palette,surface,path,polygon,dot,text,scene,chart,basicScenes,installation,orbital,sunPath,polarPoint,solarChartLines,solarChartAzimuth,solarCards};
 })(globalThis);

@@ -1,5 +1,11 @@
 # Cambios
 
+## 0.7.1 · Carta solar del hemisferio Sur
+
+- La carta cartesiana se centra en el Norte para latitudes negativas, con Oeste a la izquierda y Este a la derecha.
+- Trayectorias, líneas horarias, etiquetas y marcador solar comparten esa referencia visual; se conserva el corte de las curvas en el cenit y en el extremo del eje.
+- El acimut del modelo, los datos exportados y la carta polar conservan sus convenciones.
+
 ## 0.7.0 · Primera versión del repositorio
 
 Cinco laboratorios con identidad USAL: órbita, geometría solar, filas fijas, Este–Oeste y seguimiento geométrico N–S.

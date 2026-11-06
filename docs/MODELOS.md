@@ -4,7 +4,7 @@ Los modelos se han adaptado de los prototipos MATLAB de IRRADIANCE, de Esteban S
 
 ## Geometría y tiempo
 
-Ángulos en grados. Coordenadas locales Este/Norte/Cenit; acimut desde el Sur, Este negativo y Oeste positivo. En cenit/nadir el acimut es indeterminado. En los polos el marco horizontal es convencional. Se clasifican día/noche polar y contactos del horizonte.
+Ángulos en grados. Coordenadas locales Este/Norte/Cenit; acimut desde el Sur, Este negativo y Oeste positivo. Solo en la figura 06, la carta cartesiana usa un eje centrado en el Norte para latitudes negativas (Oeste −90°, Norte 0°, Este +90°); para latitudes no negativas conserva el centro en el Sur. Es una transformación visual: los indicadores y CSV mantienen el acimut desde el Sur. En cenit/nadir el acimut es indeterminado. En los polos el marco horizontal es convencional. Se clasifican día/noche polar y contactos del horizonte.
 
 - Geometría básica: δ=23,45 sin[360(284+n)/365], año didáctico 2026 de 365 días.
 - Layouts: δ=−23,44 cos[360(n−355)/365,2422].

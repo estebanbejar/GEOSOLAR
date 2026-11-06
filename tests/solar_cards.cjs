@@ -18,4 +18,30 @@ for(const lat of [-90,-66.55,-40,0,23.45,40,66.55,90])for(const delta of [-23.45
   const c=()=>({width:600,height:400,getBoundingClientRect:()=>({width:600,height:400}),getContext:()=>ctx});
   R.solarCards(c(),c(),{lat,delta,time:12});checks++;
 }
-console.log(`PASS: ${checks} comprobaciones de cartas solares, incluidos cenit, horizonte exacto, polos y puntos cardinales.`);
+// Cartesian chart: the southern noon path must cross the centre continuously.
+for(const lat of [-34.6,40,0]){
+  for(const az of [-180,-90,0,90,180]){
+    const expected=lat<0?new Map([[-180,0],[-90,90],[0,-180],[90,-90],[180,0]]).get(az):az;
+    near(R.solarChartAzimuth(az,lat),expected);
+  }
+  assert.equal(R.solarChartAzimuth(null,lat),null);checks++;
+}
+for(const lat of [-34.6,40])for(const delta of [-23.45,0,23.45]){
+  const strokes=[],arcs=[],labels=[];let commands=[];
+  const ctx={setTransform(){},clearRect(){},fillRect(){},save(){},restore(){},setLineDash(){},fill(){},
+    beginPath(){commands=[];},moveTo(x,y){commands.push(['M',x,y]);},lineTo(x,y){commands.push(['L',x,y]);},
+    stroke(){strokes.push({color:this.strokeStyle,width:this.lineWidth,commands:[...commands]});},
+    arc(x,y,r){arcs.push({x,y,r});},fillText(text,x,y){labels.push({text,x,y});}};
+  const canvas=()=>({width:600,height:400,getBoundingClientRect:()=>({width:600,height:400}),getContext:()=>ctx});
+  const polarCtx=new Proxy({},{get:(o,k)=>o[k]||(()=>{}),set:(o,k,v)=>(o[k]=v,true)});
+  const polar={...canvas(),getContext:()=>polarCtx};
+  R.solarCards(polar,canvas(),{lat,delta,time:12});
+  const selected=strokes.find(s=>s.color==='#8c243c'&&s.width===2.1);
+  assert.equal(selected.commands.filter(c=>c[0]==='M').length,1,'no split at solar noon');
+  const marker=arcs.find(a=>a.r===5);near(marker.x,313);
+  const noon=labels.find(l=>l.text==='12 h');near(noon.x,313);
+  const morning=selected.commands[0],evening=selected.commands.at(-1);
+  assert.ok(lat<0?morning[1]>313&&evening[1]<313:morning[1]<313&&evening[1]>313);
+  assert.ok(labels.some(l=>l.text.includes(lat<0?'centrado en el Norte':'desde el Sur')));checks++;
+}
+console.log(`PASS: ${checks} comprobaciones de cartas solares, incluidos hemisferios, continuidad al mediodía, marcador, cenit y polos.`);
