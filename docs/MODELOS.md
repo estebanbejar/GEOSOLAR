@@ -15,6 +15,8 @@ La conversión civil usa longitud, ET y zona IANA. Una hora civil ambigua selecc
 
 ## Filas fijas y E–O
 
+Solo en filas fijas, `alpha` es el desvío respecto al ecuador. `fixedOrientation` convierte a acimut efectivo desde el Sur: alpha en latitud ≥ 0° y 180° + alpha en latitud negativa, normalizado circularmente. Define el marco local para geometría y dimensionamiento. Los escenarios antiguos mantienen alpha, pero en el Sur se corrigen su frente y resultados; [detalles y validación](CORRECCION_FILAS_HEMISFERIO_SUR.md). E–O conserva su convención de giro de cumbrera.
+
 Las sombras se calculan proyectando las mesas sobre cada receptora, recortando y uniendo los polígonos sin contar solapes dos veces. Se distingue sombra geométrica de cara sin Sol directo, que incluye incidencia posterior. Terreno horizontal y mesas iguales y finitas.
 
 En fijo: b=L cos β, H=L sin β, d=HK, P=b+d y LCR=b/P. K usa 1801 posiciones de las tres horas centrales del invierno de cada hemisferio. En E–O: P=2L cos β+0,05+d y LCR=2L cos β/P. El hueco de cumbrera es 5 cm.

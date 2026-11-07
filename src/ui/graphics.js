@@ -19,8 +19,9 @@
     if(!bounds.length)return;
     const projected=bounds.map(raw),xs=projected.map(p=>p[0]),ys=projected.map(p=>p[1]);
     let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
-    const scale=Math.min((w-60)/Math.max(.1,xmax-xmin),(h-44)/Math.max(.1,ymax-ymin));
-    const project=p=>{const a=raw(p);return [(a[0]-(xmin+xmax)/2)*scale+w/2,(a[1]-(ymin+ymax)/2)*scale+h/2];};
+    const plotHeight=h-(options.bottomInset||0);
+    const scale=Math.min((w-60)/Math.max(.1,xmax-xmin),(plotHeight-44)/Math.max(.1,ymax-ymin));
+    const project=p=>{const a=raw(p);return [(a[0]-(xmin+xmax)/2)*scale+w/2,(a[1]-(ymin+ymax)/2)*scale+plotHeight/2];};
     // Terrain is a background layer. Each table and its cell lines/shadows
     // form one depth-sorted object, so overlays cannot float through other rows.
     const depthItem=i=>['polygon','group'].includes(i.kind)||i.layer!==undefined;
@@ -134,7 +135,21 @@
     // Ground grid and sun vector are local cues, not extra geometric inputs.
     const center=[(xmin+xmax)/2,(ymin+ymax)/2,Math.max(...points.map(v=>v[2]))+p.L*.5],len=Math.max(p.L*1.6,Math.min(p.W,4));
     if(s[2]>0){const tip=G.add(center,G.mul(s,len));items.push(path([center,tip],'#c39735',2),dot(tip,'#d4a238',6));boundPoints.push(tip);}
-    scene(canvas,items,{az:options.az??-30,el:options.top?90:28,bounds:boundPoints,compass:true});
+    const project=scene(canvas,items,{az:options.az??-30,el:options.top?90:28,bounds:boundPoints,compass:true,bottomInset:options.fixed?76:0});
+    if(options.fixed){
+      // Reconstruct the front from the very vertices passed to polygon(),
+      // never from the apparent slope in the current camera projection.
+      const f=faces[0],normal=G.cross(G.sub(f.vertices[1],f.vertices[0]),G.sub(f.vertices[3],f.vertices[0]));
+      const horizontal=Math.hypot(normal[0],normal[1]),forward=horizontal>1e-10?G.mul([normal[0],normal[1],0],1/horizontal):G.fixedOrientation(p).forward;
+      const az=G.atan2(-forward[0],-forward[1]),cardinal=Math.abs(forward[0])<1e-10?(forward[1]>0?'Norte':'Sur'):Math.abs(forward[1])<1e-10?(forward[0]>0?'Este':'Oeste'):az.toFixed(0)+'° desde Sur';
+      const a=project([0,0,0]),b=project(forward),length=Math.hypot(b[0]-a[0],b[1]-a[1]);
+      const dx=(b[0]-a[0])/length,dy=(b[1]-a[1])/length,{ctx,w,h}= {ctx:canvas.getContext('2d'),w:canvas.getBoundingClientRect().width,h:canvas.getBoundingClientRect().height};
+      const x=27,y=h-48,X=x+20*dx,Y=y+20*dy;
+      ctx.save();
+      ctx.strokeStyle='#8c243c';ctx.lineWidth=2;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(x-12*dx,y-12*dy);ctx.lineTo(X,Y);ctx.moveTo(X-7*dx+4*dy,Y-7*dy-4*dx);ctx.lineTo(X,Y);ctx.lineTo(X-7*dx-4*dy,Y-7*dy+4*dx);ctx.stroke();
+      ctx.fillStyle='#8c243c';ctx.font='bold 11px system-ui';ctx.textAlign='left';ctx.fillText('Frente: '+cardinal,54,h-46);ctx.font='10px system-ui';ctx.fillStyle='#596760';ctx.fillText(horizontal>1e-10?'Proyección horizontal de la normal':'β = 0°: dirección frontal convencional',15,h-15);ctx.restore();
+    }
+    return project;
   }
   function orbital(canvas,day,top=false){
     const o=G.orbit(day),items=[],orbitPath=G.range(0,365,361).map(t=>G.orbit(t).pos);

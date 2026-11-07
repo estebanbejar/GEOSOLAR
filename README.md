@@ -33,6 +33,7 @@ En la versión publicada habrá un enlace **Descargar versión sin conexión** a
 - [Validación](docs/VALIDACION.md).
 - [Activar GitHub Pages](docs/PUBLICAR_GITHUB.md).
 - [Cambios de la versión inicial](CHANGELOG.md).
+- [Corrección 0.7.2: filas fijas en el hemisferio Sur y compatibilidad de escenarios](docs/CORRECCION_FILAS_HEMISFERIO_SUR.md).
 
 ## Desarrollo
 
@@ -65,7 +66,7 @@ docs/                        Guías
 
 Versión inicial del repositorio: **0.7.0**. Los modelos proceden de prototipos MATLAB de IRRADIANCE, que permanecen como referencia independiente.
 
-Las pruebas incluyen 581 comparaciones numéricas con MATLAB, 2178 invariantes, 111 combinaciones de orden de dibujo, 45 casos de iluminación/color, 70 comprobaciones de cartas solares y 38 comprobaciones de ejecución de interfaz con sustitutos DOM/Canvas. Estas últimas no sustituyen pruebas de un navegador real. La interfaz ha recibido revisiones manuales durante su desarrollo; la matriz de compatibilidad entre navegadores queda pendiente.
+Las pruebas incluyen 581 comparaciones numéricas con MATLAB, 2178 invariantes, 111 combinaciones de orden de dibujo, 45 casos de iluminación/color, 106 comprobaciones de cartas solares, 280 configuraciones australes de filas fijas y 51 comprobaciones de ejecución de interfaz con sustitutos DOM/Canvas. Estas últimas no sustituyen pruebas de un navegador real. La interfaz ha recibido revisiones manuales durante su desarrollo; la matriz de compatibilidad entre navegadores queda pendiente.
 
 Son modelos didácticos aproximados. La sombra geométrica no equivale a una pérdida energética. Esta versión no calcula producción eléctrica ni irradiación anual PVGIS y no sustituye un proyecto de ingeniería.
 

@@ -1,0 +1,24 @@
+Validación ejecutada el 7 de noviembre de 2026 · GEOSOLAR 0.7.2 local
+Comando: node scripts/check.cjs
+
+PASS: 581 comparaciones MATLAB.
+Error máximo absoluto: 8.333409162926724e-8 (dentro de tolerancia 1e-6 h para contactos del horizonte; tolerancia general 1e-8).
+PASS: 2178 invariantes y comparaciones geométricas independientes.
+PASS: terreno, sombras y grupos de mesas en 111 combinaciones de layout/cámara.
+PASS: 45 casos de iluminación/color; 10 con sombras frontales y 6 con incidencia posterior.
+PASS: 106 comprobaciones de cartas solares, incluidos hemisferios, continuidad al mediodía, marcador, cenit y polos.
+PASS: fixed_hemispheres.cjs:
+  configurations: 280
+  checks: 1422274
+  maxWinterShadowFraction: 0
+  maxMirroredPitchErrorMetres: 3.552713678800501e-15
+  shadowTolerance: 1e-8
+  baseline: 665069614900e3b5f5d8d20121c6aa2f2988a851
+PASS: 51 runtime UI smoke checks with DOM/Canvas stand-ins; actual browser rendering not verified. Incluye adaptación de cámara al cambiar de hemisferio y persistencia de cámaras elegidas o guardadas.
+GEOSOLAR: todas las comprobaciones han finalizado correctamente.
+
+Comando: node scripts/build.cjs
+GEOSOLAR: dist/index.html y site/ preparados, sin dependencias remotas.
+
+Revisión visual: vistas Canvas revisadas en ambos hemisferios. No equivalen a capturas reales de navegador; estas últimas están pendientes por bloqueo del entorno.
+No se ha publicado, desplegado ni modificado ningún proyecto MATLAB.

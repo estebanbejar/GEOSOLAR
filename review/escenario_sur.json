@@ -1,0 +1,18 @@
+{
+  "format": "GEOSOLAR",
+  "version": 1,
+  "lab": "fixed",
+  "model": "fixed-equator-v2",
+  "parameters": {
+    "lat": -40,
+    "alpha": 0,
+    "beta": 30,
+    "L": 2,
+    "W": 10,
+    "n": 5,
+    "h": 0.3,
+    "date": "2026-06-21",
+    "time": 12,
+    "camera": 150
+  }
+}

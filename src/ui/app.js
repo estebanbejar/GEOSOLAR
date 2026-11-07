@@ -59,7 +59,8 @@
       html+='<div class="presets"><button type="button" data-date="2026-12-21">21 diciembre</button><button type="button" data-date="2026-06-21">21 junio</button><button type="button" id="equinox-toggle" data-equinox-toggle="true" aria-controls="equinox-dates" aria-expanded="false">Equinoccios</button></div><div id="equinox-dates" class="presets equinox-dates" hidden><button type="button" data-date="2026-03-20">Marzo · 20/03</button><button type="button" data-date="2026-09-22">Septiembre · 22/09</button><span>Fechas de referencia del año didáctico.</span></div>';
       html+=select('reference','Referencia horaria',[['solar','Hora solar'],['civil','Hora civil']])+text('zone','Huso horario IANA');
       html+=section('Geometría de las mesas');
-      if(lab!=='tracking')html+=range('alpha',lab==='eo'?'Giro de la cumbrera':'Acimut frontal',-90,90,1,'°')+range('beta','Inclinación',0,lab==='eo'?90:45,1,'°');
+      if(lab!=='tracking')html+=range('alpha',lab==='eo'?'Giro de la cumbrera':'Acimut',-90,90,1,'°')+range('beta','Inclinación',0,lab==='eo'?90:45,1,'°');
+      if(lab==='fixed')html+='<p class="caption" id="fixed-orientation-help">El acimut indica el desvío respecto a la orientación hacia el ecuador. 0°: frente Sur para latitud ≥ 0°; frente Norte para latitud &lt; 0°. Acimut efectivo = desvío en el Norte y 180° + desvío en el Sur (Sur 0°, Este negativo, Oeste positivo). Las filas discurren E–O con desvío 0°.</p>';
       html+=range('L','Anchura inclinada',.1,100,.1,'m')+range('W','Longitud de fila',.1,1000,.1,'m')+range('n',lab==='eo'?'Conjuntos de dos caras':'Número de filas',1,30,1)+range('h',lab==='tracking'?'Altura del soporte':'Altura inferior',lab==='tracking'?.01:0,lab==='tracking'?30:20,.01,'m');
       if(lab==='eo')html+=range('d','Hueco inferior',0,10,.05,'m');
       if(lab==='tracking'){
@@ -98,7 +99,7 @@
       const key='<span class="path-june">Junio</span> · <span class="path-equinox">Equinoccios</span> · <span class="path-december">Diciembre</span> · <span class="path-selected">Caso seleccionado</span>';
       html+=card('solar-polar','<span>05</span> Carta polar de trayectorias solares','Centro: cenit (90°). Borde: horizonte (0°). Norte arriba, Este a la derecha.<br>'+key+'<br>Gris fino: trayectorias intermedias. Gris punteado: horas solares, sin analema.<br>Punto dorado: instante seleccionado.')+card('solar-cartesian','<span>06</span> Carta de trayectorias solares','Altura frente a acimut. Centro: Norte en el hemisferio Sur; Sur en el hemisferio Norte y el ecuador. Se omite el recorrido nocturno.<br>'+key+'<br>Gris fino: trayectorias intermedias. Gris punteado: horas solares, sin analema.<br>En cenit el acimut es indeterminado; no se une la curva a través de él.');
     }else if(lab==='orbit')html=card('orbital','Órbita e iluminación terrestre','Órbita casi circular. Los tamaños de la Tierra y del Sol están ampliados.');
-    else html=card('scene3d','<span>01</span> Instalación · vista 3D','Rojo: sombra frontal. Azul oscuro: incidencia posterior o rasante. Gris: noche o terreno.',true)+card('plan','<span>02</span> Planta · Norte arriba','Amarillo: dirección hacia el Sol. Código de iluminación explicado debajo de las vistas.');
+    else html=card('scene3d','<span>01</span> Instalación · vista 3D','Rojo: sombra frontal. Azul oscuro: incidencia posterior o rasante. Gris: noche o terreno.',true)+card('plan','<span>02</span> Planta · Norte arriba',lab==='fixed'?'Granate: dirección del frente (normal). Amarillo: dirección hacia el Sol. Norte arriba, Este a la derecha.':'Amarillo: dirección hacia el Sol. Código de iluminación explicado debajo de las vistas.');
     $('visuals').innerHTML=html;
     $('tabs').hidden=true;
     $('shadow-key').hidden=!['fixed','eo','tracking'].includes(lab);
@@ -182,10 +183,10 @@
           drawMonthly(c);
         }else{
           faces=c.layout.faces;shade=G.shadows(faces,sun.vector);
-          $('metrics').innerHTML=metric('Hueco entre '+(lab==='eo'?'conjuntos':'filas'),num(d.d),'m',lab==='eo'?'Separación manual':'Diseño invernal · ±1,5 h')+metric('Paso del patrón',num(d.P),'m','Borde a borde equivalente')+metric('Cobertura horizontal',num(d.LCR*100,1),'%','LCR · sin pasillos ni márgenes')+metric('Altura solar',num(sun.alt,1),'°',sun.status);
+          $('metrics').innerHTML=metric('Hueco entre '+(lab==='eo'?'conjuntos':'filas'),num(d.d),'m',lab==='eo'?'Separación manual':'Diseño invernal · ±1,5 h')+metric('Paso del patrón',num(d.P),'m',lab==='fixed'?'Acimut frontal: '+num(G.fixedOrientation(c.p).azimuth,1)+'° desde Sur':'Borde a borde equivalente')+metric('Cobertura horizontal',num(d.LCR*100,1),'%','LCR · sin pasillos ni márgenes')+metric('Altura solar',num(sun.alt,1),'°',sun.status);
         }
         {
-          R.installation($('scene3d'),c.p,faces,shade,sun.vector,{az:s.camera,tracking:lab==='tracking'});R.installation($('plan'),c.p,faces,shade,sun.vector,{top:true,az:0,tracking:lab==='tracking'});
+          R.installation($('scene3d'),c.p,faces,shade,sun.vector,{az:s.camera,tracking:lab==='tracking',fixed:lab==='fixed'});R.installation($('plan'),c.p,faces,shade,sun.vector,{top:true,az:0,tracking:lab==='tracking',fixed:lab==='fixed'});
         }
         let lineSeries=[];
         for(let j=0;j<(lab==='eo'?s.n*2:s.n);j++){
@@ -204,6 +205,7 @@
         R.chart($('chart-main'),chartData,{ymin:0,ymax:100,label:'Cara sin Sol directo (%)',rightLabel:'Ángulos (°)',yminRight:-90,ymaxRight:180,yticksRight:[-90,0,90,180],marker:s.time,onSelect:setTime});
         headers=[s.reference==='civil'?'hora_civil_h':'hora_solar_h',...lineSeries.map((_,j)=>'sin_sol_directo_'+(j+1)+'_porcentaje'),...angleSeries.map(q=>q.column)];
         rows=c.times.map((t,i)=>[t,...lineSeries.map(q=>q.points[i][1]),...angleSeries.map(q=>q.points[i][1])]);
+        if(lab==='fixed'){headers.push('desvio_ecuador_grados','acimut_frontal_desde_sur_grados');const az=G.fixedOrientation(c.p).azimuth;rows.forEach(row=>row.push(s.alpha,az));}
         const fractions=lab==='tracking'?track.fraction:shade.map(m=>m.fraction),valid=fractions.filter(v=>v!==null),avg=valid.length?valid.reduce((a,b)=>a+b,0)/valid.length:null;
         $('chart-note').textContent=prettyDate(s.date)+' · '+(s.reference==='civil'?'Hora civil en '+s.zone:'Hora solar')+' · Instante: '+hh(s.time)+' · Media de superficie sin Sol directo: '+num(avg===null?null:100*avg,1)+' %. La noche se omite. Este porcentaje combina sombras e incidencia posterior; no es una pérdida energética.';
       }
@@ -244,11 +246,13 @@
     const note='<p>Geometría docente: sin espesor de módulos, irradiación difusa, respuesta bifacial ni pérdidas eléctricas. Se representan ambos ángulos: con la normal θ (0° perpendicular, 90° rasante, &gt;90° posterior) y con el plano η (90° perpendicular, 0° rasante, negativo por detrás). Se cumple θ + η = 90°. Ambos usan el eje derecho de la gráfica; los porcentajes usan el izquierdo.</p>';
     if(which==='basic')return shared+'<div class="equation">ω = 15° (tₛ − 12) · sin α = sin φ sin δ + cos φ cos δ cos ω<br>δ = 23,45° sin[360° (284 + n) / 365]</div><p>El modo manual conserva δ al cambiar la fecha. «Según fecha» utiliza un año didáctico no bisiesto de 365 días. El acimut se omite en cenit/nadir; en los polos el marco horizontal es convencional. Los tramos punteados de las trayectorias están bajo el horizonte.</p><p class="teaching-question"><b>Antes de mover el control:</b> ¿dónde culmina el Sol en el Ecuador durante un equinoccio? ¿Qué cambia al pasar de +40° a −40°?</p>';
     if(which==='orbit')return '<div class="equation">M = E − e sin E · e = 0,0167 · a = 1 UA<br>δ = asin(eje norte · dirección Tierra–Sol)</div><p>Órbita kepleriana de 365 días. Perihelio fijado el 3 de enero; eje inclinado 23,44° y fijo en el espacio. Los eventos se calculan con este mismo modelo, calibrado al equinoccio de marzo. Los cuerpos tienen tamaños muy ampliados; la excentricidad orbital no está exagerada.</p><p>La ET es la aproximación armónica NOAA, independiente de la órbita didáctica. No representa una efeméride exacta de 2026. No se simula rotación diaria, precesión ni perturbaciones.</p><p class="teaching-question"><b>Predice:</b> ¿está la Tierra más cerca del Sol durante junio? ¿Por qué ambos hemisferios tienen estaciones opuestas?</p>';
-    if(which==='fixed')return shared+'<div class="equation">b = L cos β · H = L sin β · d = H K<br>P = b + d · LCR = b / P</div><p>El hueco se diseña automáticamente para las 10:30–13:30 solares del solsticio de invierno de cada hemisferio, muestreando 1801 posiciones. Cambiar la fecha visualizada no redimensiona ese criterio. El terreno es horizontal; filas iguales, finitas y paralelas. LCR es proyección horizontal de módulos por terreno del patrón, sin márgenes ni pasillos.</p>'+time+note+'<p class="teaching-question"><b>Compara:</b> al aumentar la inclinación, ¿qué ocurre con el paso y el LCR? ¿Una sombra a una hora concreta determina la energía anual?</p>';
+    if(which==='fixed')return shared+'<div class="equation">b = L cos β · H = L sin β · d = H K<br>P = b + d · LCR = b / P</div><p>El desvío se mide respecto a la orientación base hacia el ecuador: frente Sur para latitud ≥ 0° y Norte para latitud &lt; 0°. El acimut frontal efectivo es desvío o 180° + desvío, normalizado desde el Sur. La normal del plano determina la incidencia; con desvío 0° las filas discurren E–O. Los escenarios existentes conservan el valor de alpha: en latitudes negativas se corrige su interpretación anterior, que orientaba las mesas hacia el Sur. Con β = 0° la normal es vertical; la flecha conserva la dirección frontal convencional.</p><p>El hueco se diseña automáticamente para las 10:30–13:30 solares del solsticio de invierno de cada hemisferio, muestreando 1801 posiciones. Cambiar la fecha visualizada no redimensiona ese criterio. El terreno es horizontal; filas iguales, finitas y paralelas. LCR es proyección horizontal de módulos por terreno del patrón, sin márgenes ni pasillos.</p>'+time+note+'<p class="teaching-question"><b>Compara:</b> al aumentar la inclinación, ¿qué ocurre con el paso y el LCR? ¿Una sombra a una hora concreta determina la energía anual?</p>';
     if(which==='eo')return shared+'<div class="equation">P = 2 L cos β + 0,05 m + d<br>LCR = 2 L cos β / P · acimuts = giro ± 90°</div><p>Dos caras iguales por conjunto. Cumbrera abierta 5 cm y hueco inferior manual. El giro cero alinea la cumbrera Norte–Sur. E y O identifican las caras originales incluso al girar. Se proyectan y unen las sombras de todas las caras; el límite de 90° es geométrico.</p>'+time+note+'<p class="teaching-question"><b>Compara:</b> ¿se intercambian las curvas de E y O entre mañana y tarde? ¿Mayor cobertura significa mayor producción?</p>';
     return shared+'<div class="equation">GCR = anchura / paso horizontal E–O<br>θ ideal = atan2(−s·Este, s·c)</div><p>El eje sigue la pendiente N–S. Las pendientes son positivas si el terreno sube hacia Norte o Este. El paso de invierno se dimensiona sin backtracking entre 10:30 y 13:30 solares; el GCR manual permite fijarlo. Se comprueba que las mesas no toquen el terreno en todo el recorrido mecánico.</p><p>El backtracking reduce el giro para evitar sombras cuando la separación y los límites lo permiten. No garantiza eliminarlas en toda combinación de pendientes. Las horas libres suman intervalos de un minuto con todas las filas sin sombras y Sol frontal visible; no tienen por qué formar un intervalo continuo.</p>'+time+'<p><b>Alcance de esta entrega:</b> geometría, sombras y comparación de giro en doce fechas. La irradiación anual PVGIS queda pendiente. GCR no equivale al LCR proyectado de las filas fijas; no se estima energía eléctrica.</p><p class="teaching-question"><b>Predice:</b> ¿cómo cambia el giro al activar backtracking con un GCR alto? ¿Por qué evitar sombras no basta para cuantificar la mejora eléctrica?</p>';
   }
   function download(filename,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+  // Rotate the stored view only when crossing hemispheres, never on render.
+  const oppositeCamera=angle=>((angle+360)%360+360)%360-180;
   function exportCanvas(id){
     const source=$(id);if(!source||!computed)return;const out=document.createElement('canvas');out.width=source.width;out.height=source.height+140;const ctx=out.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);ctx.drawImage($('usal-logo'),18,15,192,54);ctx.fillStyle='#8c243c';ctx.font='bold 20px system-ui';ctx.fillText('GEOSOLAR · '+meta[lab].title,18,105);ctx.drawImage(source,0,125);ctx.fillStyle='#596760';ctx.font='10px system-ui';ctx.fillText('Modelo docente · '+figureTimestamp(),18,out.height-5,out.width-36);out.toBlob(blob=>{const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='GEOSOLAR_'+lab+'_'+id+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),1500);});
   }
@@ -257,6 +261,9 @@
     const el=e.target,key=el.dataset.key;if(!key||el.tagName==='SELECT'||['date','text'].includes(el.type))return;
     if(!el.validity.valid)return;const v=+el.value;if(!Number.isFinite(v))return;
     if(lab==='basic'&&key==='day'){selectBasicDay(v);return;}
+    if(lab==='fixed'&&key==='lat'&&(states.fixed.lat<0)!==(v<0)){
+      states.fixed.camera=oppositeCamera(states.fixed.camera);$('camera').value=states.fixed.camera;
+    }
     states[lab][key]=v;if(key==='day')stop();cache=null;syncControls();requestRender();
   });
   $('controls').addEventListener('change',e=>{
@@ -313,7 +320,7 @@
       render();if(running)frame=requestAnimationFrame(tick);
     };frame=requestAnimationFrame(tick);
   };
-  $('save-scenario').onclick=()=>download('GEOSOLAR_'+lab+'.json',JSON.stringify({format:'GEOSOLAR',version:1,lab,model:'matlab-compat-v1',parameters:states[lab]},null,2),'application/json');
+  $('save-scenario').onclick=()=>download('GEOSOLAR_'+lab+'.json',JSON.stringify({format:'GEOSOLAR',version:1,lab,model:lab==='fixed'?'fixed-equator-v2':'matlab-compat-v1',parameters:states[lab]},null,2),'application/json');
   $('load-scenario').onclick=()=>$('scenario-file').click();
   $('scenario-file').onchange=async e=>{
     try{
@@ -333,12 +340,15 @@
         if(key==='date'&&(!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value))||new Date(value+'T00:00:00Z').toISOString().slice(0,10)!==value))throw Error('Fecha no válida.');
         if(key==='zone')G.offsetAt(Date.now(),value);candidate[key]=value;
       }
-      states[target]=candidate;setLab(target);toast('Escenario cargado.');
+      // A saved camera is an explicit user choice; adapt only an omitted one.
+      if(target==='fixed'&&candidate.lat<0&&data.parameters.camera===undefined)candidate.camera=oppositeCamera(defaults.fixed.camera);
+      states[target]=candidate;setLab(target);toast(target==='fixed'&&candidate.lat<0?'Escenario cargado: alpha conserva su valor como desvío hacia el ecuador; se corrige el antiguo frente Sur.':'Escenario cargado.');
     }catch(err){toast('No se pudo abrir: '+err.message);}finally{e.target.value='';}
   };
   $('export-csv').onclick=()=>{
     if(!computed||!rows.length)return;
-    const s=states[lab],metaRows=['# GEOSOLAR · '+meta[lab].title,'# Modelo: matlab-compat-v1','# Parámetros: '+JSON.stringify(s),'# null/vacío = noche o magnitud indeterminada; no es cero','# Porcentajes geométricos: no equivalen a pérdidas energéticas'];
+    const s=states[lab],metaRows=['# GEOSOLAR · '+meta[lab].title,'# Modelo: '+(lab==='fixed'?'fixed-equator-v2':'matlab-compat-v1'),'# Parámetros: '+JSON.stringify(s),'# null/vacío = noche o magnitud indeterminada; no es cero','# Porcentajes geométricos: no equivalen a pérdidas energéticas'];
+    if(lab==='fixed')metaRows.push('# Orientación: alpha = desvío respecto al ecuador; acimut frontal efectivo desde Sur = '+G.fixedOrientation(s).azimuth+' grados. Escenarios negativos anteriores: interpretación corregida.');
     download('GEOSOLAR_'+lab+'.csv','\uFEFF'+metaRows.join('\r\n')+'\r\n'+headers.join(';')+'\r\n'+rows.map(r=>r.map(v=>v===null?'':v).join(';')).join('\r\n'),'text/csv;charset=utf-8');
   };
   window.addEventListener('resize',requestRender);document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});

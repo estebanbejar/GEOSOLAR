@@ -18,7 +18,7 @@ Las figuras 1–4 muestran relaciones geométricas. Las figuras 5–6 son cartas
 
 ## Layouts
 
-- **Filas fijas:** el hueco se calcula para tres horas centrales de invierno; la fecha de la escena no modifica ese criterio de diseño.
+- **Filas fijas:** el hueco se calcula para tres horas centrales de invierno; la fecha de la escena no modifica ese criterio de diseño. El desvío cero orienta el frente hacia el ecuador: Sur para latitudes ≥ 0° y Norte para latitudes negativas; la longitud de fila discurre E–O. La flecha granate identifica el frente, el vector amarillo el Sol. Los escenarios anteriores conservan su desvío, pero se corrige su interpretación en latitudes negativas; véase el [informe de compatibilidad](CORRECCION_FILAS_HEMISFERIO_SUR.md).
 - **Este–Oeste:** el hueco inferior es manual. Cada conjunto contiene dos caras; con giro cero la cumbrera está alineada N–S.
 - **Seguidor:** se puede dimensionar el paso en invierno o fijarlo mediante GCR. Las pendientes suben hacia Norte/Este cuando son positivas. Las dos gráficas mensuales usan el mismo paso, con y sin backtracking.
 

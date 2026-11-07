@@ -120,12 +120,20 @@
       return {fraction:front?geometric:1,geometric,incidence,polys,front};
     });
   }
+  // alpha remains the stored deviation from the equator-facing orientation.
+  // This is the sole conversion to an effective South-based frontal azimuth.
+  function fixedOrientation(p) {
+    const azimuth=((p.alpha+(p.lat<0?180:0)+180)%360+360)%360-180;
+    const forward=[-sin(azimuth),-cos(azimuth),0],back=mul(forward,-1),along=[-cos(azimuth),sin(azimuth),0];
+    return {azimuth,forward,back,along,toLocal:s=>[dot(s,back),dot(s,along),s[2]]};
+  }
   function fixedDesign(p) {
+    const orientation=fixedOrientation(p);
     const delta=p.lat<0?23.44:-23.44;let K=0;
     for(const w of range(-22.5,22.5,1801)){
       const s=solar(p.lat,delta,12+w/15).vector;
       if(s[2]<=0)throw Error('La ventana de invierno incluye Sol bajo el horizonte. Reduzca la latitud.');
-      const forward=[-sin(p.alpha),-cos(p.alpha),0];K=Math.max(K,Math.max(0,dot(s,forward)/s[2]));
+      const local=orientation.toLocal(s);K=Math.max(K,Math.max(0,-local[0]/local[2]));
     }
     const b=p.L*cos(p.beta),H=p.L*sin(p.beta),d=H*K,P=b+d;
     return {P,b,H,d,LCR:b/P};
@@ -133,7 +141,7 @@
   function layout(p,type='fixed',design) {
     const faces=[];
     if(type==='fixed'){
-      design=design||fixedDesign(p);const back=[sin(p.alpha),cos(p.alpha),0],along=[-cos(p.alpha),sin(p.alpha),0];
+      design=design||fixedDesign(p);const {back,along}=fixedOrientation(p);
       const u=add(mul(back,cos(p.beta)),[0,0,sin(p.beta)]);
       for(let j=0;j<p.n;j++)faces.push(face(add(mul(back,j*design.P),[0,0,p.h]),u,along,p.L,p.W,j));
     }else{
@@ -186,6 +194,6 @@
     for(let k=0;k<1440;k++){const m=trackState(p,solar(p.lat,delta,(k+.5)/60).vector,P,bt);if(m.front&&m.fraction.every(f=>f!==null&&f<=1e-8))count++;}
     return count/60;
   }
-  root.GEOSOLAR={D,sin,cos,tan,clamp,asin,atan2,add,sub,mul,dot,norm,cross,range,dayOfYear,declination,solar,daylight,orbit,events,etLayout,offsetAt,civilToSolar,solarToCivil,clipRect,unionArea,face,shadows,fixedDesign,layout,trackDesign,trackState,trackFaces,freeHours};
+  root.GEOSOLAR={D,sin,cos,tan,clamp,asin,atan2,add,sub,mul,dot,norm,cross,range,dayOfYear,declination,solar,daylight,orbit,events,etLayout,offsetAt,civilToSolar,solarToCivil,clipRect,unionArea,face,shadows,fixedOrientation,fixedDesign,layout,trackDesign,trackState,trackFaces,freeHours};
   if(typeof module!=='undefined')module.exports=root.GEOSOLAR;
 })(typeof globalThis!=='undefined'?globalThis:this);

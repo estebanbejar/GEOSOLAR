@@ -38,7 +38,8 @@ const document={getElementById:id=>ids.get(id)||null,activeElement:null,hidden:f
     throw Error('Unexpected selector: '+selector);
   }
 };
-const sandbox={console,document,Intl,Date,Math,JSON,Number,Array,Object,Map,Set,String,Error,structuredClone,URL,Blob,setTimeout:()=>1,clearTimeout(){},performance:{now:()=>clock},requestAnimationFrame:f=>(queue.push(f),queue.length),cancelAnimationFrame(){}};
+const downloads=[];
+const sandbox={console,document,Intl,Date,Math,JSON,Number,Array,Object,Map,Set,String,Error,structuredClone,URL:{createObjectURL:b=>(downloads.push(b),'blob:test'),revokeObjectURL(){}},Blob,setTimeout:()=>1,clearTimeout(){},performance:{now:()=>clock},requestAnimationFrame:f=>(queue.push(f),queue.length),cancelAnimationFrame(){}};
 sandbox.window=sandbox;sandbox.globalThis=sandbox;sandbox.devicePixelRatio=1;sandbox.addEventListener=()=>{};vm.createContext(sandbox);
 for(const file of ['src/core/models.js','src/ui/graphics.js','src/ui/app.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox,{filename:file});
 const flush=()=>{const callbacks=queue.splice(0);clock+=16;callbacks.forEach(f=>f(clock));};
@@ -90,4 +91,25 @@ click({lab:'eo'});fill('beta',90);noError('vertical EO');checks++;
 click({lab:'fixed'});fill('reference','civil','change');noError('civil');fill('reference','solar','change');noError('solar');checks++;
 ids.get('play').onclick();flush();assert.match(ids.get('play').textContent,/Pausar/);ids.get('play').onclick();assert.match(ids.get('play').textContent,/Reproducir/);checks++;
 for(const width of [380,800,1400]){for(const c of document.querySelectorAll('canvas'))c.getBoundingClientRect=()=>({width,height:280,left:0,top:0});click({lab:'basic'});noError('canvas width '+width);checks++;}
-console.log(`PASS: ${checks} runtime UI smoke checks with DOM/Canvas stand-ins; actual browser rendering not verified.`);
+(async()=>{
+  click({lab:'fixed'});ids.get('reset').onclick();flush();
+  fill('lat',-40);assert.equal(Number(ids.get('camera').value),150);checks++;
+  fill('lat',-34.6);assert.equal(Number(ids.get('camera').value),150);checks++;
+  ids.get('camera').value='110';ids.get('visuals').listeners.input({target:ids.get('camera')});flush();
+  fill('beta',35);click({date:'2026-06-21'});fill('lat',-35);assert.equal(Number(ids.get('camera').value),110);checks++;
+  fill('lat',40);assert.equal(Number(ids.get('camera').value),-70);fill('lat',-40);assert.equal(Number(ids.get('camera').value),110);checks++;
+  const old={format:'GEOSOLAR',version:1,lab:'fixed',model:'matlab-compat-v1',parameters:{lat:-34.6,alpha:0,beta:30,L:2,W:10,n:3,h:.3,date:'2026-06-21',time:12,camera:37}};
+  await ids.get('scenario-file').onchange({target:{files:[{size:500,text:async()=>JSON.stringify(old)}],value:'old.json'}});flush();noError('old southern scenario');
+  assert.equal(Number(ids.get('field-alpha').value),0);assert.equal(Number(ids.get('camera').value),37);
+  assert.match(ids.get('controls').innerHTML,/>Acimut<input/);assert.match(ids.get('fixed-orientation-help').innerHTML||ids.get('controls').innerHTML,/180°/);
+  assert.match(ids.get('toast').textContent,/corrige el antiguo frente Sur/);assert.match(ids.get('metrics').innerHTML,/-180,0/);checks++;
+  const winterPitch=ids.get('metrics').innerHTML.match(/Paso del patrón[\s\S]*?<strong>([^<]+)/)[1];
+  click({date:'2026-12-21'});assert.equal(ids.get('metrics').innerHTML.match(/Paso del patrón[\s\S]*?<strong>([^<]+)/)[1],winterPitch);checks++;
+  fill('lat',-40);fill('alpha',20);assert.equal(Number(ids.get('camera').value),37);checks++;
+  ids.get('save-scenario').onclick();const saved=JSON.parse(await downloads.at(-1).text());assert.equal(saved.version,1);assert.equal(saved.parameters.alpha,20);assert.equal(saved.model,'fixed-equator-v2');checks++;
+  ids.get('export-csv').onclick();const csv=await downloads.at(-1).text();assert.match(csv,/acimut_frontal_desde_sur_grados/);assert.match(csv,/# Orientación: alpha = desvío respecto al ecuador/);assert.match(csv,/;20;-160/);checks++;
+  assert.match(ids.get('table-wrap').innerHTML,/desvio_ecuador_grados/);assert.match(ids.get('table-wrap').innerHTML,/acimut_frontal_desde_sur_grados/);checks++;
+  delete old.parameters.camera;await ids.get('scenario-file').onchange({target:{files:[{size:500,text:async()=>JSON.stringify(old)}],value:'without-camera.json'}});flush();assert.equal(Number(ids.get('camera').value),150);checks++;
+  for(const lab of ['eo','tracking']){click({lab});fill('lat',-40);assert.equal(Number(ids.get('camera').value),-30);ids.get('save-scenario').onclick();assert.equal(JSON.parse(await downloads.at(-1).text()).model,'matlab-compat-v1');assert.doesNotMatch(ids.get('table-wrap').innerHTML,/desvio_ecuador_grados/);checks++;}
+  console.log(`PASS: ${checks} runtime UI smoke checks with DOM/Canvas stand-ins; actual browser rendering not verified.`);
+})().catch(error=>{console.error(error);process.exitCode=1;});
