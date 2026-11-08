@@ -18,6 +18,8 @@ Aplicación HTML, CSS y JavaScript que realiza los cálculos en el navegador. El
 
 Incluye animación, tablas, exportación CSV/PNG y guardar/abrir escenarios JSON.
 
+La página **Créditos**, a la derecha de los cinco laboratorios, recoge la finalidad docente, la autoría, los enlaces institucionales y la licencia MIT completa, legible también sin conexión. Entrar en ella pausa la animación y conserva los parámetros de los laboratorios. Versión 0.7.3 · actualización: 8 de noviembre de 2026.
+
 ## Usar GEOSOLAR
 
 - **Web:** la dirección prevista es [estebanbejar.github.io/GEOSOLAR](https://estebanbejar.github.io/GEOSOLAR/), una vez activado GitHub Pages. La existencia de este enlace en el README no certifica que la publicación ya esté activa.
@@ -66,7 +68,7 @@ docs/                        Guías
 
 Versión inicial del repositorio: **0.7.0**. Los modelos proceden de prototipos MATLAB de IRRADIANCE, que permanecen como referencia independiente.
 
-Las pruebas incluyen 581 comparaciones numéricas con MATLAB, 2178 invariantes, 111 combinaciones de orden de dibujo, 45 casos de iluminación/color, 106 comprobaciones de cartas solares, 280 configuraciones australes de filas fijas y 51 comprobaciones de ejecución de interfaz con sustitutos DOM/Canvas. Estas últimas no sustituyen pruebas de un navegador real. La interfaz ha recibido revisiones manuales durante su desarrollo; la matriz de compatibilidad entre navegadores queda pendiente.
+Las pruebas incluyen 581 comparaciones numéricas con MATLAB, 2178 invariantes, 111 combinaciones de orden de dibujo, 45 casos de iluminación/color, 106 comprobaciones de cartas solares, 280 configuraciones australes de filas fijas y 61 comprobaciones de ejecución de interfaz con sustitutos DOM/Canvas. Estas últimas no sustituyen pruebas de un navegador real. La interfaz ha recibido revisiones manuales durante su desarrollo; la matriz de compatibilidad entre navegadores queda pendiente.
 
 Son modelos didácticos aproximados. La sombra geométrica no equivale a una pérdida energética. Esta versión no calcula producción eléctrica ni irradiación anual PVGIS y no sustituye un proyecto de ingeniería.
 

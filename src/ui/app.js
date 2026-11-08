@@ -31,7 +31,7 @@
     tracking:{title:'Seguimiento a un eje N–S',section:'GEOMETRÍA DE INSTALACIONES',subtitle:'Estudia el giro del seguidor, las pendientes del terreno y el efecto del backtracking.'}
   };
   let states=structuredClone(defaults),lab='orbit',view='scene',running=false,lastTick=0,frame=0,cache=null,computed=null,chartData=[],rows=[],headers=[],toastTimer;
-  let pending=false;
+  let pending=false,creditsVisible=false;
   const fields={};
   function toast(t){$('toast').textContent=t;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),3000);}
   function stop(){running=false;cancelAnimationFrame(frame);$('play').textContent='▶ Reproducir';$('play').setAttribute('aria-label','Reproducir animación');}
@@ -155,6 +155,7 @@
     cache=result;return result;
   }
   function render(){
+    if(creditsVisible){pending=false;return;}
     pending=false;syncControls();$('figure-time').textContent=figureTimestamp();
     try{
       const s=states[lab],c=compute();computed=c;$('error').hidden=true;
@@ -235,10 +236,18 @@
     states[lab][annual?'day':'time']=G.clamp(v,annual?1:0,annual?365:24);if(annual)cache=null;requestRender();
   }
   function setLab(next){
+    creditsVisible=false;$('credits-page').hidden=true;$('lab-intro').hidden=false;$('lab-workspace').hidden=false;
+    $('credits-nav').removeAttribute('aria-current');$('skip-link').setAttribute('href','#controls');$('skip-link').textContent='Ir a los parámetros';
     stop();lab=next;view='scene';cache=null;const m=meta[lab],index=['orbit','basic','fixed','eo','tracking'].indexOf(lab)+1;
     $('title').textContent=m.title;$('subtitle').textContent=m.subtitle;$('eyebrow').textContent=m.section+' / LABORATORIO '+String(index).padStart(2,'0');
     document.querySelectorAll('[data-lab]').forEach(b=>{if(b.dataset.lab===lab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
     document.title=m.title+' · GEOSOLAR · USAL';buildControls();setupViews();render();
+  }
+  function showCredits(){
+    stop();creditsVisible=true;$('lab-intro').hidden=true;$('lab-workspace').hidden=true;$('credits-page').hidden=false;
+    document.querySelectorAll('[data-lab]').forEach(b=>b.removeAttribute('aria-current'));
+    $('credits-nav').setAttribute('aria-current','page');$('skip-link').setAttribute('href','#credits-title');$('skip-link').textContent='Ir a los créditos';
+    document.title='Créditos y aviso de uso · GEOSOLAR · USAL';$('credits-title').focus();
   }
   function explanation(which){
     const shared='<p><b>Convención:</b> acimut desde el Sur (0°), Este negativo y Oeste positivo. Coordenadas Este/Norte/Cenit. Los modelos solares son aproximados.</p>';
@@ -288,6 +297,7 @@
   document.addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b)return;
     if(b.dataset.lab)setLab(b.dataset.lab);
+    if(b.dataset.credits)showCredits();
     if(b.dataset.preset!==undefined){states.basic.delta=+b.dataset.preset;states.basic.mode='manual';cache=null;stop();syncControls();requestRender();}
     if(b.dataset.event!==undefined){states.orbit.day=G.events()[+b.dataset.event].time+1;cache=null;stop();requestRender();}
     if(b.dataset.equinoxToggle){const panel=$('equinox-dates');panel.hidden=!panel.hidden;b.setAttribute('aria-expanded',String(!panel.hidden));}

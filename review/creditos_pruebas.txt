@@ -1,0 +1,41 @@
+GEOSOLAR 0.7.3 · Créditos · 8 de noviembre de 2026
+
+{
+  "status": "PASS",
+  "comparisons": 581,
+  "maxAbsoluteError": 8.333409162926724e-8,
+  "tolerances": {
+    "general": 1e-8,
+    "daylightHoursNearTangency": 0.000001,
+    "azimuth": "diferencia circular; +180° y −180° equivalentes"
+  },
+  "matlab": "26.1.0.3346908 (R2026a) Update 5",
+  "tests": [
+    "solar y régimen polar",
+    "órbita y eventos",
+    "filas y E–O: sombras e incidencia",
+    "seguimiento: diseño, BT y horas libres",
+    "unión poligonal",
+    "cambio horario civil",
+    "rechazo de contacto con terreno y ventana invernal inválida"
+  ]
+}
+PASS: 2178 invariantes y comparaciones geométricas independientes.
+PASS: terreno, sombras y grupos de mesas en 111 combinaciones de layout/cámara.
+PASS: 45 casos de iluminación/color; 10 con sombras frontales y 6 con incidencia posterior.
+PASS: 106 comprobaciones de cartas solares, incluidos hemisferios, continuidad al mediodía, marcador, cenit y polos.
+{
+  "status": "PASS",
+  "configurations": 280,
+  "checks": 1422274,
+  "maxWinterShadowFraction": 0,
+  "maxMirroredPitchErrorMetres": 3.552713678800501e-15,
+  "shadowTolerance": 1e-8,
+  "baseline": "665069614900e3b5f5d8d20121c6aa2f2988a851"
+}
+PASS: créditos aprobados, seis enlaces seguros, versión/fecha y licencia íntegra sin servicios externos.
+PASS: 61 runtime UI smoke checks with DOM/Canvas stand-ins; actual browser rendering not verified.
+GEOSOLAR: todas las comprobaciones han finalizado correctamente.
+
+Distribución generada correctamente con node scripts/build.cjs.
+

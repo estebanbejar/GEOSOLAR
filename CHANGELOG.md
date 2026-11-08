@@ -1,5 +1,12 @@
 # Cambios
 
+## 0.7.3 · Créditos y aviso de uso · 8 de noviembre de 2026
+
+- Página informativa Créditos al extremo derecho de la navegación, con finalidad docente, autoría completa, ORCID, Codex, enlaces institucionales y repositorios relacionados.
+- Texto aprobado adaptado a HTML, sin atribuciones a servicios que esta versión no utiliza ni modelos de IA no documentados.
+- Licencia MIT completa y copyright original disponibles sin conexión, versión y fecha fija de actualización.
+- Entrar en Créditos detiene la animación y conserva los parámetros; regresar a cualquier laboratorio recupera su estado. Sin cambios en modelos, gráficas ni exportaciones.
+
 ## 0.7.2 · Filas fijas orientadas hacia el ecuador
 
 - Corrección física del laboratorio 03 en latitudes negativas: orientación efectiva única para dimensionamiento, geometría, sombras e incidencia.
