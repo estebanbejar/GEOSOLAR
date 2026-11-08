@@ -18,6 +18,7 @@ class Element{
   setAttribute(k,v){this.attrs[k]=v;}
   removeAttribute(k){delete this.attrs[k];}
   addEventListener(k,fn){this.listeners[k]=fn;}
+  focus(){document.activeElement=this;}
   getBoundingClientRect(){return {width:500,height:280,left:0,top:0};}
   getContext(){return context2d;}
   closest(){return this;}
@@ -111,5 +112,19 @@ for(const width of [380,800,1400]){for(const c of document.querySelectorAll('can
   assert.match(ids.get('table-wrap').innerHTML,/desvio_ecuador_grados/);assert.match(ids.get('table-wrap').innerHTML,/acimut_frontal_desde_sur_grados/);checks++;
   delete old.parameters.camera;await ids.get('scenario-file').onchange({target:{files:[{size:500,text:async()=>JSON.stringify(old)}],value:'without-camera.json'}});flush();assert.equal(Number(ids.get('camera').value),150);checks++;
   for(const lab of ['eo','tracking']){click({lab});fill('lat',-40);assert.equal(Number(ids.get('camera').value),-30);ids.get('save-scenario').onclick();assert.equal(JSON.parse(await downloads.at(-1).text()).model,'matlab-compat-v1');assert.doesNotMatch(ids.get('table-wrap').innerHTML,/desvio_ecuador_grados/);checks++;}
+  for(const lab of ['orbit','basic','fixed','eo','tracking']){
+    click({lab});ids.get('play').onclick();flush();
+    ids.get('save-scenario').onclick();const before=JSON.parse(await downloads.at(-1).text());
+    const views=ids.get('visuals').innerHTML;
+    click({credits:'true'});
+    assert.equal(ids.get('credits-page').hidden,false);assert.equal(ids.get('lab-workspace').hidden,true);assert.equal(ids.get('lab-intro').hidden,true);
+    assert.equal(ids.get('credits-nav').attrs['aria-current'],'page');assert.equal(document.activeElement.id,'credits-title');
+    assert.match(ids.get('play').textContent,/Reproducir/);assert.match(document.title,/Créditos y aviso de uso/);
+    assert.equal(ids.get('skip-link').attrs.href,'#credits-title');assert.equal(ids.get('skip-link').textContent,'Ir a los créditos');flush();assert.equal(ids.get('visuals').innerHTML,views);checks++;
+    click({lab});noError('return from credits '+lab);
+    assert.equal(ids.get('credits-page').hidden,true);assert.equal(ids.get('lab-workspace').hidden,false);assert.equal(ids.get('lab-intro').hidden,false);
+    assert.equal(ids.get('credits-nav').attrs['aria-current'],undefined);assert.equal(ids.get('skip-link').attrs.href,'#controls');assert.equal(ids.get('skip-link').textContent,'Ir a los parámetros');
+    ids.get('save-scenario').onclick();const after=JSON.parse(await downloads.at(-1).text());assert.deepEqual(after,before);checks++;
+  }
   console.log(`PASS: ${checks} runtime UI smoke checks with DOM/Canvas stand-ins; actual browser rendering not verified.`);
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -10,10 +10,13 @@ Ejecutar `node scripts/check.cjs` con Node.js 24. No se necesitan paquetes adici
 | 45 casos de iluminación/color | Frente, posterior, noche, sombra frontal, ocultación por terreno y dirección solar nocturna. |
 | 106 comprobaciones de cartas | Orientación cardinal, cenit, horizonte, polos, trayectorias y líneas horarias; centro según hemisferio, continuidad al mediodía, etiquetas y marcador solar. |
 | 280 configuraciones australes de filas fijas | Normales de vértices dibujados, simetría del paso, ausencia de solapes, ventana invernal, incidencia, noche, regresión del Norte y de 04/05. |
-| 51 comprobaciones de interfaz | Sustitutos DOM/Canvas: controles, navegación, fechas, modos, escenarios antiguos, persistencia de cámara y exportaciones. |
+| 61 comprobaciones de interfaz | Sustitutos DOM/Canvas: controles, navegación, escenarios, cámara, exportaciones y pausa/conservación de estado al entrar y salir de Créditos desde los cinco laboratorios. |
+| Créditos | Texto aprobado, seis destinos de enlaces seguros, versión/fecha, licencia íntegra y ausencia de atribuciones a servicios no utilizados. |
 
 Las referencias numéricas están en `tests/reference/matlab.json`, exportadas con MATLAB R2026a Update 5 a partir de funciones puras de los prototipos. Tolerancia general 1e−8; duración del día cerca de contactos 1e−6 horas. El acimut se compara circularmente.
 
 `tests/reference/comparison.json` se regenera y no se versiona. Los sustitutos DOM/Canvas no verifican la disposición CSS ni constituyen pruebas de navegador. Se han revisado manualmente imágenes calculadas y se han incorporado observaciones del usuario sobre versiones locales. Quedan por ampliar las pruebas sistemáticas de navegadores, accesibilidad y adaptación móvil.
 
 Para la corrección 0.7.2 se añaden salidas congeladas del commit actual previo (`tests/reference/pre_fixed_equator_v071.json`), sin alterar las referencias MATLAB. La tolerancia de sombra relativa es 1e−8; la máxima sombra observada en el barrido nuevo es cero. La revisión de capturas reales de navegador está pendiente por restricciones de acceso del entorno. Véase [informe de la corrección](CORRECCION_FILAS_HEMISFERIO_SUR.md).
+
+La página Créditos de 0.7.3 se ha revisado en un navegador real a 1280 × 900 y 390 × 844, sin desbordamiento horizontal. Se comprobó la lectura de la licencia desplegable, los enlaces y el foco. En el laboratorio 03, un escenario con latitud −34,6°, siete filas y cámara 150° conservó todos esos valores y la hora detenida al regresar. También se abrió la distribución de un único HTML, comprobando scripts y estilos integrados. Capturas y evidencia: `review/creditos_escritorio.png`, `review/creditos_movil.png` y `review/creditos_navegador.json`.

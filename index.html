@@ -8,26 +8,27 @@
   <script defer src="src/core/models.js"></script><script defer src="src/ui/graphics.js"></script><script defer src="src/ui/app.js"></script>
 </head>
 <body>
-<a class="skip" href="#controls">Ir a los parámetros</a>
+<a id="skip-link" class="skip" href="#controls">Ir a los parámetros</a>
 <header class="brand">
   <img id="usal-logo" src="assets/usal.png" alt="Universidad de Salamanca" width="192" height="54">
   <div class="brand-divider"></div>
   <div class="brand-unit">Escuela Técnica Superior de Ingeniería Industrial<span>Área de Tecnología Electrónica</span></div>
   <div class="brand-project">GEOSOLAR<span>Laboratorios de tecnología fotovoltaica</span></div>
 </header>
-<nav class="lab-nav" aria-label="Laboratorios">
+<nav class="lab-nav" aria-label="Laboratorios y créditos">
   <button data-lab="orbit" aria-current="page"><span>01</span> Órbita Tierra–Sol</button>
   <button data-lab="basic"><span>02</span> Geometría solar</button>
   <button data-lab="fixed"><span>03</span> Filas y sombras</button>
   <button data-lab="eo"><span>04</span> Este–Oeste</button>
   <button data-lab="tracking"><span>05</span> Seguimiento N–S</button>
+  <button id="credits-nav" data-credits="true" aria-controls="credits-page">Créditos</button>
 </nav>
 <main>
-  <section class="intro">
+  <section class="intro" id="lab-intro">
     <div><p class="eyebrow" id="eyebrow">FUNDAMENTOS / LABORATORIO 01</p><h1 id="title">Órbita Tierra–Sol</h1><p id="subtitle">Explora la relación entre latitud, declinación y posición del Sol.</p></div>
     <div class="local-badge"><span></span> Cálculo local · sin conexión</div>
   </section>
-  <div class="workspace">
+  <div class="workspace" id="lab-workspace">
     <aside class="controls-panel" aria-label="Parámetros del laboratorio">
       <div class="panel-heading"><h2>Explorar</h2><button class="text-button" id="reset" title="Restablecer este laboratorio">Restablecer ↺</button></div>
       <form id="controls" autocomplete="off"></form>
@@ -53,8 +54,62 @@
       <details class="explanation" open><summary>Modelo y claves de interpretación</summary><div id="explanation"></div></details>
     </section>
   </div>
+  <article id="credits-page" class="credits-page" aria-labelledby="credits-title" hidden>
+    <p class="eyebrow">GEOSOLAR / INFORMACIÓN</p>
+    <h1 id="credits-title" tabindex="-1">Créditos y aviso de uso</h1>
+    <section aria-labelledby="credits-purpose"><h2 id="credits-purpose">Finalidad docente</h2>
+      <p>GEOSOLAR es una herramienta didáctica para la asignatura <strong>Tecnología e Instalaciones Fotovoltaicas</strong>, del <strong>Grado en Electrónica Industrial y Automática</strong> de la <strong>Escuela Técnica Superior de Ingeniería Industrial de la Universidad de Salamanca</strong>.</p>
+      <p><a href="https://industriales.usal.es/" target="_blank" rel="noopener noreferrer">Escuela Técnica Superior de Ingeniería Industrial</a></p>
+      <p>Su finalidad es facilitar la comprensión de la geometría solar, la irradiación y el comportamiento de las instalaciones fotovoltaicas mediante simulaciones y visualizaciones interactivas.</p>
+      <p>Los modelos incorporan simplificaciones y aproximaciones con fines docentes. Sus resultados no sustituyen el cálculo, la verificación normativa ni la evaluación técnica necesarios para proyectar una instalación real. El software se proporciona sin garantías de ausencia de errores.</p>
+    </section>
+    <section aria-labelledby="credits-author"><h2 id="credits-author">Autoría y desarrollo</h2>
+      <p>Desarrollado por <strong>Esteban Sánchez Hernández</strong>, Catedrático de Escuela Universitaria del Área de Tecnología Electrónica, Departamento de Física Aplicada, Universidad de Salamanca.</p>
+      <p><strong>ORCID:</strong> <a href="https://orcid.org/0000-0003-1341-8767" target="_blank" rel="noopener noreferrer">0000-0003-1341-8767</a></p>
+      <p>Programado con <strong>Codex de OpenAI</strong>, bajo la dirección del autor.</p>
+      <p>Los modelos numéricos se han adaptado de las aplicaciones MATLAB del proyecto <strong>IRRADIANCE</strong>, del autor.</p>
+    </section>
+    <section aria-labelledby="credits-html"><h2 id="credits-html">Versión HTML</h2>
+      <p>Esta versión realiza los cálculos en el navegador y puede utilizarse sin conexión. No requiere MATLAB, licencias de pago ni instalaciones adicionales.</p>
+      <p>La aplicación no incorpora bibliotecas JavaScript de terceros ni necesita consultar servicios externos para ejecutar sus laboratorios.</p>
+    </section>
+    <section aria-labelledby="credits-source"><h2 id="credits-source">Código fuente y versiones relacionadas</h2>
+      <ul>
+        <li><a href="https://github.com/estebanbejar/GEOSOLAR" target="_blank" rel="noopener noreferrer">Repositorio de GEOSOLAR HTML</a></li>
+        <li><a href="https://estebanbejar.github.io/GEOSOLAR/" target="_blank" rel="noopener noreferrer">Aplicación web</a></li>
+        <li><a href="https://github.com/estebanbejar/GEOSOLAR_MATLAB" target="_blank" rel="noopener noreferrer">Suite MATLAB asociada: GEOSOLAR_MATLAB</a></li>
+      </ul>
+    </section>
+    <section aria-labelledby="credits-licence"><h2 id="credits-licence">Licencia</h2>
+      <p>El código de GEOSOLAR se distribuye bajo <strong>licencia MIT</strong>, conservando las atribuciones y licencias de sus componentes y datos externos. Los logotipos y marcas pertenecen a sus respectivos titulares.</p>
+      <p>El logotipo de la Universidad de Salamanca se utiliza como identificación institucional. La licencia del código no concede derechos sobre las marcas de la Universidad.</p>
+      <p><a href="https://github.com/estebanbejar/GEOSOLAR/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">Consultar el texto íntegro de la licencia MIT en el repositorio</a></p>
+      <details class="credits-license"><summary>Leer la licencia completa sin conexión</summary><pre id="credits-license-text">MIT License
+
+Copyright (c) 2025 Esteban Sánchez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</pre></details>
+    </section>
+    <p class="credits-version">GEOSOLAR HTML · Versión 0.7.3<br>Actualización: <time datetime="2026-11-08">8 de noviembre de 2026</time></p>
+  </article>
 </main>
-<footer><span>Universidad de Salamanca · GEOSOLAR</span><span>Modelos docentes aproximados · Fases 1–4 · Versión 0.7.2</span></footer>
+<footer><span>Universidad de Salamanca · GEOSOLAR</span><span>Modelos docentes aproximados · Fases 1–4 · Versión 0.7.3</span></footer>
 <div id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

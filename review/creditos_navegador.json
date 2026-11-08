@@ -1,0 +1,38 @@
+{
+  "desktop": {
+    "width": 1280,
+    "height": 900,
+    "overflow": false
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "licenseExpanded": true
+  },
+  "pausedScenario": {
+    "button": "▶ Reproducir",
+    "camera": "150",
+    "lat": "-34.6",
+    "rows": "7",
+    "time": "9.38",
+    "workspaceHidden": true
+  },
+  "restoredScenario": {
+    "button": "▶ Reproducir",
+    "camera": "150",
+    "lat": "-34.6",
+    "rows": "7",
+    "time": "9.38",
+    "workspaceHidden": false
+  },
+  "standalone": {
+    "creditsVisible": true,
+    "desktopWidth": 1280,
+    "documentWidth": 1265,
+    "inlineScripts": true,
+    "inlineStyles": true,
+    "license": true,
+    "version": "GEOSOLAR HTML · Versión 0.7.3Actualización: 8 de noviembre de 2026"
+  }
+}
