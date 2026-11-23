@@ -18,7 +18,7 @@ Aplicación HTML, CSS y JavaScript que realiza los cálculos en el navegador. El
 
 Incluye animación, tablas, exportación CSV/PNG y guardar/abrir escenarios JSON.
 
-La página **Créditos**, a la derecha de los cinco laboratorios, recoge la finalidad docente, la autoría, los enlaces institucionales y la licencia MIT completa, legible también sin conexión. Entrar en ella pausa la animación y conserva los parámetros de los laboratorios. Versión 0.7.3 · actualización: 8 de noviembre de 2026.
+La página **Créditos**, a la derecha de los cinco laboratorios, recoge la finalidad docente, la autoría, los enlaces institucionales y la licencia MIT completa, legible también sin conexión. Entrar en ella pausa la animación y conserva los parámetros de los laboratorios. Versión 0.7.4 · actualización: 23 de noviembre de 2026.
 
 ## Usar GEOSOLAR
 
@@ -68,10 +68,12 @@ docs/                        Guías
 
 Versión inicial del repositorio: **0.7.0**. Los modelos proceden de prototipos MATLAB de IRRADIANCE, que permanecen como referencia independiente.
 
-Las pruebas incluyen 581 comparaciones numéricas con MATLAB, 2178 invariantes, 111 combinaciones de orden de dibujo, 45 casos de iluminación/color, 106 comprobaciones de cartas solares, 280 configuraciones australes de filas fijas y 61 comprobaciones de ejecución de interfaz con sustitutos DOM/Canvas. Estas últimas no sustituyen pruebas de un navegador real. La interfaz ha recibido revisiones manuales durante su desarrollo; la matriz de compatibilidad entre navegadores queda pendiente.
+Las pruebas incluyen 581 comparaciones numéricas con MATLAB, 2178 invariantes, 111 combinaciones de orden de dibujo, 45 casos de iluminación/color, 106 comprobaciones de cartas solares, 350 configuraciones australes de filas fijas y 63 comprobaciones de ejecución de interfaz con sustitutos DOM/Canvas. Estas últimas no sustituyen pruebas de un navegador real. La interfaz ha recibido revisiones manuales durante su desarrollo; la matriz de compatibilidad entre navegadores queda pendiente.
 
 Son modelos didácticos aproximados. La sombra geométrica no equivale a una pérdida energética. Esta versión no calcula producción eléctrica ni irradiación anual PVGIS y no sustituye un proyecto de ingeniería.
 
 ## Licencia y atribución
 
 Código bajo [licencia MIT](LICENSE), con la autoría de Esteban Sánchez. Los modelos se adaptan del proyecto IRRADIANCE. El logotipo USAL conserva los derechos de su titular; la licencia del código no concede derechos sobre marcas institucionales. Véase [ATRIBUCIONES.md](ATRIBUCIONES.md).
+
+El laboratorio 03 permite inclinaciones de módulos entre 0° y 60°, incluyendo escenarios guardados.

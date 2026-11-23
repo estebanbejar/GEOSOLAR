@@ -15,7 +15,7 @@ for(const q of baseline.cases){
   for(const s of q.samples)same(G.shadows(l.faces,G.solar(q.p.lat,-23.44,s.time).vector),s.shade);
 }
 for(const q of baseline.tracking){same(G.trackDesign(q.p),q.design);for(const s of q.samples){const v=G.solar(q.p.lat,q.p.lat<0?23.44:-23.44,s.time).vector,m=G.trackState(q.p,v,q.design.P,q.bt);same(m,s.state);same(G.trackFaces(q.p,m,q.design.P),s.faces);}}
-for(const lat of [-1,-23.45,-34.6,-55,-60])for(const alpha of [-90,-45,-20,0,20,45,90])for(const beta of [0,10,30,45])for(const n of [1,3]){
+for(const lat of [-1,-23.45,-34.6,-55,-60])for(const alpha of [-90,-45,-20,0,20,45,90])for(const beta of [0,10,30,45,60])for(const n of [1,3]){
   const p={lat,alpha,beta,L:2,W:10,n,h:.3},orientation=G.fixedOrientation(p),l=G.layout(p),mirror=G.fixedDesign({...p,lat:-lat,alpha:-alpha});
   maxSymmetry=Math.max(maxSymmetry,Math.abs(l.design.P-mirror.P));near(l.design.P,mirror.P);
   near(l.design.P,l.design.b+l.design.d);assert.ok(l.design.d>=0);if(beta===0)near(l.design.d,0);

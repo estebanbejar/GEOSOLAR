@@ -1,5 +1,10 @@
 # Cambios
 
+## 0.7.4 · Filas fijas hasta 60° · 23 de noviembre de 2026
+
+- Ampliada la inclinación del laboratorio 03 de 0–45° a 0–60°, tanto en controles como en carga de escenarios. Se mantiene el límite de 90° de E–O.
+- Comprobados el paso invernal, las sombras y los ángulos a 60° en ambos hemisferios; regresiones anteriores conservadas.
+
 ## 0.7.3 · Créditos y aviso de uso · 8 de noviembre de 2026
 
 - Página informativa Créditos al extremo derecho de la navegación, con finalidad docente, autoría completa, ORCID, Codex, enlaces institucionales y repositorios relacionados.
